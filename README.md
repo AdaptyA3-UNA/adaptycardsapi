@@ -35,7 +35,7 @@ O back-end é a espinha dorsal da aplicação, responsável por:
 
 *   **Framework:** ASP.NET Core
 *   **Linguagem:** C#
-*   **Banco de Dados:** PostgreSQL
+*   **Banco de Dados:** MySQL
 *   **Containerização:** Docker
 *   **ORM:** Entity Framework Core (padrão do .NET Core para PostgreSQL)
 *   **Autenticação:** JWT (JSON Web Tokens)
