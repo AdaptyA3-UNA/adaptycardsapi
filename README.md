@@ -1,10 +1,10 @@
 # Adapty-cards_API (Back-end)
 
 [![.NET Core](https://img.shields.io/badge/.NET_Core-512BD4?style=for-the-badge&logo=dotnet&logoColor=white)](https://dotnet.microsoft.com/)
-[![PostgreSQL](https://img.shields.io/badge/PostgreSQL-316192?style=for-the-badge&logo=postgresql&logoColor=white)](https://www.postgresql.org/)
+[![MySQL](https://img.shields.io/badge/MySQL-4479A1?style=for-the-badge&logo=mysql&logoColor=white)](https://www.mysql.com/)
 [![Docker](https://img.shields.io/badge/Docker-2496ED?style=for-the-badge&logo=docker&logoColor=white)](https://www.docker.com/)
 
-Este repositório contém o código-fonte da API RESTful do Adapty, o sistema que gerencia decks, flashcards, usuários e a lógica de repetição espaçada. Construído com ASP.NET Core, utilizando PostgreSQL como banco de dados e Docker para orquestração.
+Este repositório contém o código-fonte da API RESTful do Adapty, o sistema que gerencia decks, flashcards, usuários e a lógica de repetição espaçada. Construído com ASP.NET Core, utilizando **MySQL** como banco de dados e Docker para orquestração.
 
 ## 📚 Sumário
 
@@ -15,18 +15,18 @@ Este repositório contém o código-fonte da API RESTful do Adapty, o sistema qu
 5.  [Scripts Disponíveis](#-scripts-disponíveis)
 6.  [Estrutura do Projeto](#-estrutura-do-projeto)
 7.  [Rotas da API](#-rotas-da-api)
-8.  [Testes](#-testes)
-9.  [Contribuição](#-contribuição)
-10. [Licença](#-licença)
+8.  [Contribuição](#-contribuição)
+9. [Licença](#-licença)
 
 ## 💡 Sobre o Projeto
 
-O Adapty é uma aplicação web revolucionária focada em estudo com flashcards, **priorizando a acessibilidade e personalização para estudantes com divergências cognitivas**, como TDAH, dislexia e autismo. Nosso objetivo é promover a **inclusão e equidade (ODS 4)** por meio de aprendizado personalizado, valorizando a diversidade e garantindo **acesso igualitário a recursos educacionais (ODS 10)**.
+O Adapty é uma aplicação web **Mobile First** revolucionária focada em estudo com flashcards, **priorizando a acessibilidade e personalização para estudantes com divergências cognitivas**, como TDAH, dislexia e autismo. Nosso objetivo é promover a **inclusão e equidade (ODS 4)** por meio de aprendizado personalizado, valorizando a diversidade e garantindo **acesso igualitário a recursos educacionais (ODS 10)**.
 
 O back-end é a espinha dorsal da aplicação, responsável por:
 
 *   Gerenciamento de **Cadastro e Login** (RF001 - perfis seguros).
 *   **CRUD de decks e cartões** (RF002, RF003).
+*   **Comunicação:** Suporte para interação de dúvidas entre aluno e professor.
 *   Implementação da lógica de **repetição espaçada** para uma **Progressão gradual e repetição espaçado** (RF004, RF005).
 *   Armazenamento e processamento de dados para **Estatísticas de sessão** (RF009).
 *   Suporte para **Exportação de Decks** em JSON/CSV (RF008).
@@ -37,7 +37,7 @@ O back-end é a espinha dorsal da aplicação, responsável por:
 *   **Linguagem:** C#
 *   **Banco de Dados:** MySQL
 *   **Containerização:** Docker
-*   **ORM:** Entity Framework Core (padrão do .NET Core para PostgreSQL)
+*   **ORM:** Entity Framework Core (MySQL Provider)
 *   **Autenticação:** JWT (JSON Web Tokens)
 *   **Variáveis de Ambiente:** `appsettings.json` e variáveis de ambiente do sistema.
 
@@ -82,7 +82,7 @@ Siga os passos abaixo para configurar e executar a API localmente usando Docker 
     ```bash
     docker-compose up --build
     ```
-    *Este comando construirá as imagens do Docker (incluindo o PostgreSQL) e iniciará os containers. O Entity Framework Core aplicará as migrações automaticamente no startup, se configurado.*
+    *Este comando subirá o container do MySQL e da API. O Entity Framework Core aplicará as migrações automaticamente no startup. O Entity Framework Core aplicará as migrações automaticamente no startup, se configurado.*
 
 4.  **Verificar a API:**
     A API estará rodando em `http://localhost:8080`.
@@ -94,7 +94,7 @@ adapty-backend/
 
 │ ├── Adapty.API/ # Projeto principal da API ASP.NET Core
 
-│ │ ├── Controllers/ # Endpoints da API (Usuários, Decks, Cartões)
+│ │ ├── Controllers/ # Endpoints da API (Auth, Usuários(Aluno/Professor), Decks, Cartões)
 
 │ │ ├── Models/ # DTOs, Request/Response Models
 
