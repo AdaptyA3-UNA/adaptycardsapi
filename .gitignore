@@ -1,0 +1,49 @@
+################################################################################
+# Padrão para .NET Core / ASP.NET Core
+################################################################################
+
+# Binários e Arquivos de Build
+[Bb]in/
+[Oo]bj/
+**/[Tt]emp/
+**/_ReSharper*/
+*.[Ss]ervices/
+*.vs/
+.idea/
+
+# Pacotes e Ferramentas
+**/packages/
+**/node_modules/
+
+# Arquivos de Configuração do Desenvolvedor
+*.user
+*.userossproject
+*.suo
+*.sln.docstates
+*.vssscc
+*.user
+
+# Arquivos de Log e Cache
+*.log
+[Ll]ogs/
+.vs/
+
+# Banco de Dados e Segredos (CRÍTICO!)
+# Ignora arquivos de banco de dados locais (se usar SQLite, etc.)
+*.db
+*.sqlite
+*.mdf
+*.ldf
+
+# Ignora configurações locais com senhas/chaves (se aplicável)
+# Se você tem a senha do seu MySQL no appsettings.Development.json, ignore-o.
+appsettings.Development.json
+appsettings.Local.json
+
+################################################################################
+# O QUE NÃO DEVE SER IGNORADO
+################################################################################
+# NÃO IGNORE:
+# - Os arquivos .csproj e .sln
+# - O diretório 'Migrations' (é essencial para o EF Core)
+# - O arquivo 'appsettings.json' (padrão)
