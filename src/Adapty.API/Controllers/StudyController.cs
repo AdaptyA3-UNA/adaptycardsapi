@@ -26,11 +26,20 @@ namespace Adapty.API.Controllers
         [HttpPut("card/{cardId}/review")]
         public IActionResult ReviewCard(int cardId, [FromBody] ReviewCardDto request)
         {
-            // request.Quality deve ser: 0 (Difícil), 3 (Médio), 5 (Fácil), etc.
-            
-            // TODO: Aplicar o algoritmo SM-2 (Repetição Espaçada)
-            // Calcular próxima data de revisão baseada na 'request.Quality'
-            
+            // 1. Buscar o cartão no banco pelo cardId (simulado aqui)
+            // var card = _context.Cards.Find(cardId);
+    
+            // 2. Aplicar lógica simplificada do SM-2
+            // Se a qualidade (request.Quality) for >= 3 (Acertou):
+            //    - Atualiza o Intervalo (ex: de 1 dia vai para 6 dias)
+            //    - Atualiza o EaseFactor
+            // Se a qualidade for < 3 (Errou):
+            //    - Reseta o Intervalo para 1 dia
+
+            // 3. Calcular nova data
+            // card.NextReviewDate = DateTime.Now.AddDays(card.IntervalInDays);
+
+            // 4. Salvar no banco e retornar
             return Ok(new { message = "Revisão registrada", nextReview = DateTime.Now.AddDays(1) });
         }
     }

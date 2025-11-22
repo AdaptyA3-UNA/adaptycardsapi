@@ -22,7 +22,7 @@ namespace Adapty.API.Controllers
 
         // POST: api/auth/login
         [HttpPost("login")]
-        public IActionResult Login([FromBody] UserProfileDto request)
+        public IActionResult Login([FromBody] LoginRequestDto request)
         {
             // TODO: Validar usuário e gerar JWT
             return Ok(new { token = "exemplo_token_jwt_123456" });

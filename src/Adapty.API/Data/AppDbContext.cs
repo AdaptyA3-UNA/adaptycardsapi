@@ -14,8 +14,8 @@ namespace Adapty.API.Data
 
         // Registre seus Models aqui
         public DbSet<User> Users { get; set; }
-        public DbSet<Decks> Decks { get; set; }
-        public DbSet<Cards> Cards { get; set; }
+        public DbSet<Deck> Deck { get; set; }
+        public DbSet<Card> Card { get; set; }
         public DbSet<Study> Studies { get; set; }
     }
 }

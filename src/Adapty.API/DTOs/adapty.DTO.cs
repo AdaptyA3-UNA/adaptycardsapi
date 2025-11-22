@@ -8,6 +8,7 @@ namespace Adapty.API.DTOs
     // Auth
     public record RegisterRequestDto(string Name, string Email, string Password, string Role);
     public record UserProfileDto(string Name, string Email);
+    public record LoginRequestDto(string Email, string Password);
 
     // Decks
     public record CreateDeckDto(string Title, string Description, string[] Tags);

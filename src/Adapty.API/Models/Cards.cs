@@ -5,27 +5,19 @@ using System.Threading.Tasks;
 
 namespace Adapty.API.Models
 {
-    public class Cards
+    public class Card
     {
         public int Id { get; set; }
-    public int DeckId { get; set; }
-    public string Pergunta { get; set; } = string.Empty;
-    public string Resposta { get; set; } = string.Empty;
-    public DateTime DataCriacao { get; set; }
-
-    public Study study { get; set; } = new Study();
-    
-    public NivelDominio nivel { get; set; } = new NivelDominio(); // 0 = Novo, 1 = Reiniciar, 2 = Revisar, 3 = Já sei, 4 = Embaralhar
-
-    // Propriedade de navegação para o Deck
-    public Decks decks { get; set; } = new Decks();
-
-    public enum NivelDominio
-    {
-        Reiniciar = 1,
-        Revisar = 2,
-        jaSei = 3,
-        Embaralhar = 4
-    }
+        public int DeckId { get; set; }
+        public string Pergunta { get; set; } = string.Empty;
+        public string Resposta { get; set; } = string.Empty;
+        public DateTime DataCriacao { get; set; } = DateTime.Now;
+        // Campos necessários para o SM-2 (Repetição Espaçada)
+        public DateTime? NextReviewDate { get; set; } // Próxima data de revisão
+        public double EaseFactor { get; set; } = 2.5; // Padrão do SM-2
+        public int IntervalInDays { get; set; } = 0; // Intervalo atual
+        public int RepetitionCount { get; set; } = 0; // Quantas vezes revisou
+        
+        public Deck Deck { get; set; }
     }
 }

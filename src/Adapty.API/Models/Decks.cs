@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 
 namespace Adapty.API.Models
 {
-    public class Decks
+    public class Deck
     {
         public int Id { get; set; }
         public string Nome { get; set; } = string.Empty;
