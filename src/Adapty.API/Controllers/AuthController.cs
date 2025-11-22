@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Adapty.API.DTOs;
+using Microsoft.AspNetCore.Identity.Data;
 
 namespace Adapty.API.Controllers
 {
@@ -21,7 +22,7 @@ namespace Adapty.API.Controllers
 
         // POST: api/auth/login
         [HttpPost("login")]
-        public IActionResult Login([FromBody] LoginRequestDto request)
+        public IActionResult Login([FromBody] UserProfileDto request)
         {
             // TODO: Validar usuário e gerar JWT
             return Ok(new { token = "exemplo_token_jwt_123456" });
