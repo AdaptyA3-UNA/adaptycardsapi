@@ -1,5 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using Swashbuckle.AspNetCore.SwaggerGen;
+using Adapty.API.Data;
 // using Adapty.API.Data; // Você vai descomentar isso quando criar a classe AppDbContext
 
 var builder = WebApplication.CreateBuilder(args);
@@ -7,11 +8,9 @@ var builder = WebApplication.CreateBuilder(args);
 // 1. Configuração do Banco de Dados (MySQL)
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
 
-// OBS: Descomente as linhas abaixo quando tiver criado o arquivo Data/AppDbContext.cs
-/*
+// 2. Configura o Entity Framework para usar MySQL
 builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseMySql(connectionString, ServerVersion.AutoDetect(connectionString)));
-*/
 
 // 2. Adicionar Controllers
 builder.Services.AddControllers();
