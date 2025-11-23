@@ -12,14 +12,16 @@ namespace Adapty.API.Models
         public DateTime StartTime { get; set; }
         public DateTime? EndTime { get; set; }
 
-        public StatusRevisao Status { get; set; }
-    }
-
-    public enum StatusRevisao
-    {
-        Pendente = 1,
-        EmProgresso = 2,
-        Concluido = 3,
-        Ignorado = 4
+        public int TotalMinutes
+        {
+            get
+            {
+                if (EndTime.HasValue)
+                {
+                    return (int)(EndTime.Value - StartTime).TotalMinutes;
+                }
+                return 0;
+            }
+        }
     }
 }

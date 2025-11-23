@@ -1,10 +1,9 @@
-using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
+using Adapty.API.Data;
+using Adapty.API.Models;
 using Adapty.API.DTOs;
-using Microsoft.AspNetCore.Identity.Data;
+using Adapty.API.Services; // Importante
 
 namespace Adapty.API.Controllers
 {
@@ -12,20 +11,51 @@ namespace Adapty.API.Controllers
     [Route("api/auth")]
     public class AuthController : ControllerBase
     {
-        // POST: api/auth/register
+        private readonly AppDbContext _context;
+        private readonly AuthService _authService; // Injeta o Service
+
+        public AuthController(AppDbContext context, AuthService authService)
+        {
+            _context = context;
+            _authService = authService;
+        }
+
         [HttpPost("register")]
         public IActionResult Register([FromBody] RegisterRequestDto request)
         {
-            // TODO: Lógica de criar usuário no banco
-            return Ok(new { message = "Usuário registrado com sucesso" });
+            if (_context.Users.Any(u => u.Email == request.Email))
+            {
+                return BadRequest("Usuário já cadastrado.");
+            }
+
+            var user = new User
+            {
+                Name = request.Name,
+                Email = request.Email,
+                Role = request.Role,
+                PasswordHash = request.Password 
+            };
+
+            _context.Users.Add(user);
+            _context.SaveChanges();
+
+            return Ok(new { message = "Usuário registrado com sucesso!" });
         }
 
-        // POST: api/auth/login
         [HttpPost("login")]
         public IActionResult Login([FromBody] LoginRequestDto request)
         {
-            // TODO: Validar usuário e gerar JWT
-            return Ok(new { token = "exemplo_token_jwt_123456" });
+            var user = _context.Users.FirstOrDefault(u => u.Email == request.Email);
+
+            if (user == null || user.PasswordHash != request.Password)
+            {
+                return Unauthorized("E-mail ou senha inválidos.");
+            }
+
+            // O Controller pede o token para o Service. Ele não sabe COMO é feito.
+            var token = _authService.GenerateJwtToken(user);
+
+            return Ok(new { token = token, user = new { user.Name, user.Email } });
         }
     }
 }

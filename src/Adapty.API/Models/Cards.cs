@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using System.Text.Json.Serialization;
 
 namespace Adapty.API.Models
 {
@@ -17,7 +18,9 @@ namespace Adapty.API.Models
         public double EaseFactor { get; set; } = 2.5; // Padrão do SM-2
         public int IntervalInDays { get; set; } = 0; // Intervalo atual
         public int RepetitionCount { get; set; } = 0; // Quantas vezes revisou
-        
+
+        // Propriedade de navegação (permite acessar os dados do Deck a partir da carta)
+        [JsonIgnore] 
         public Deck Deck { get; set; }
     }
 }

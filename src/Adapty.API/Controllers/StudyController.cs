@@ -1,11 +1,11 @@
 using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Adapty.API.DTOs;
-
+using Adapty.API.DTOs; // Ou Adapty.API.Models.DTOs dependendo de como organizou
+using Adapty.API.Data;
+using Adapty.API.Models;
+using Adapty.API.Services; // Importante para achar o Service
 
 namespace Adapty.API.Controllers
 {
@@ -14,33 +14,50 @@ namespace Adapty.API.Controllers
     [Authorize]
     public class StudyController : ControllerBase
     {
-        // POST: api/study/session
+        private readonly AppDbContext _context;
+        private readonly SpacedRepetitionService _studyService; // Injetamos o Service
+
+        // Construtor recebe o Banco E o Service
+        public StudyController(AppDbContext context, SpacedRepetitionService studyService)
+        {
+            _context = context;
+            _studyService = studyService;
+        }
+
         [HttpPost("session")]
         public IActionResult StartSession([FromBody] StartSessionDto request)
         {
-            // TODO: Algoritmo para selecionar quais cartões o usuário deve estudar agora
-            return Ok(new { sessionId = "sessao_123", cardsToReview = 10 });
+            var cards = _context.Cards // Lembre de usar o plural se estiver assim no AppDbContext
+                .Where(c => c.DeckId == request.DeckId)
+                .Where(c => c.NextReviewDate == null || c.NextReviewDate <= DateTime.Now)
+                .OrderBy(c => c.NextReviewDate)
+                .Take(request.MaxCards)
+                .Select(c => new StudyCardDto(c.Id, c.Pergunta, c.Resposta, c.RepetitionCount))
+                .ToList();
+
+            if (!cards.Any())
+                return Ok(new { message = "Nenhum cartão para revisar agora!" });
+
+            return Ok(new { sessionId = Guid.NewGuid(), cards });
         }
 
-        // PUT: api/study/card/{cardId}/review
         [HttpPut("card/{cardId}/review")]
         public IActionResult ReviewCard(int cardId, [FromBody] ReviewCardDto request)
         {
-            // 1. Buscar o cartão no banco pelo cardId (simulado aqui)
-            // var card = _context.Cards.Find(cardId);
-    
-            // 2. Aplicar lógica simplificada do SM-2
-            // Se a qualidade (request.Quality) for >= 3 (Acertou):
-            //    - Atualiza o Intervalo (ex: de 1 dia vai para 6 dias)
-            //    - Atualiza o EaseFactor
-            // Se a qualidade for < 3 (Errou):
-            //    - Reseta o Intervalo para 1 dia
+            var card = _context.Cards.Find(cardId);
+            if (card == null) return NotFound("Cartão não encontrado");
 
-            // 3. Calcular nova data
-            // card.NextReviewDate = DateTime.Now.AddDays(card.IntervalInDays);
+            // --- AQUI A MÁGICA ACONTECE ---
+            // O Controller manda o Service fazer a conta difícil
+            _studyService.ProcessReview(card, request.Quality);
 
-            // 4. Salvar no banco e retornar
-            return Ok(new { message = "Revisão registrada", nextReview = DateTime.Now.AddDays(1) });
+            _context.SaveChanges();
+            
+            return Ok(new { 
+                message = "Revisão salva", 
+                nextReview = card.NextReviewDate, 
+                interval = card.IntervalInDays 
+            });
         }
     }
 }
