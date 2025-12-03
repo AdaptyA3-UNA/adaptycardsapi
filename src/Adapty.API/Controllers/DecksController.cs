@@ -19,6 +19,8 @@ namespace Adapty.API.Controllers
             _cardService = cardService;
         }
 
+        #region Endpoints
+
         // 1. LISTAR TODOS OS DECKS
         [HttpGet]
         public IActionResult GetAllDecks()
@@ -67,5 +69,28 @@ namespace Adapty.API.Controllers
             _cardService.AddCardToDeck(deckId, card);
             return Ok(new { message = "Cartão criado!", cardId = card.Id });
         }
+
+        // 5. EXCLUIR UM DECK
+        [HttpDelete("{id}")]
+        public IActionResult DeleteDeck(int id)
+        {
+            var deck = _deckService.GetDeckById(id);
+            if (deck == null)
+            {
+                return NotFound($"Deck com ID {id} não encontrado.");
+            }
+
+            try
+            {
+                _deckService.DeleteDeck(deck);
+                return Ok(new { message = $"Deck '{deck.Nome}' excluído com sucesso." });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, "Ocorreu um erro ao tentar excluir o deck.");
+            }
+        }
+
+        #endregion
     }
 }
