@@ -11,7 +11,7 @@ namespace Adapty.API.DTOs
     public record LoginRequestDto(string Email, string Password);
 
     // Decks
-    public record CreateDeckDto(string Title, string Description, string[] Tags);
+    public record CreateDeckDto(int Id, string Title, string Description, string[] Tags);
     
     // Cards
     public record CreateCardDto(string FrontText, string BackText);
@@ -31,7 +31,7 @@ namespace Adapty.API.DTOs
 
     public record ErrorResponseDto(string Message);
 
-    public record AuthResponseDto(string Token, UserProfileDto User);
+    public record AuthResponseDto(string Token);
 
     public record CardSimpleDto(int Id, string Front, string Back);
 

@@ -61,5 +61,10 @@ namespace Adapty.API.Services
             _context.Decks.Update(deck);
             _context.SaveChanges();
         }
+
+        internal void CreateDeck(object deck)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

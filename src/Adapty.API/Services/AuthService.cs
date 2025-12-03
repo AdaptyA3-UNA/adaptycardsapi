@@ -1,8 +1,6 @@
-using System;
 using System.Text;
 using System.Security.Claims;
 using System.IdentityModel.Tokens.Jwt;
-using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
 using Adapty.API.Models;
 
@@ -17,24 +15,32 @@ namespace Adapty.API.Services
             _configuration = configuration;
         }
 
-        public string GenerateJwtToken(User user)
+        public string GenerateJwtToken(Users user)
         {
             var tokenHandler = new JwtSecurityTokenHandler();
-            var key = Encoding.UTF8.GetBytes(_configuration["Jwt:Key"]);
+            var jwtKey = _configuration["Jwt:Key"] 
+        ?? throw new InvalidOperationException("Jwt:Key não configurado.");
 
-            var tokenDescriptor = new SecurityTokenDescriptor
-            {
-                Subject = new ClaimsIdentity(
-                [
-                    new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
-                    new Claim(ClaimTypes.Name, user.Email),
-                    new Claim(ClaimTypes.Role, user.Role)
-                ]),
-                Expires = DateTime.UtcNow.AddHours(8),
-                SigningCredentials = new SigningCredentials(
-                    new SymmetricSecurityKey(key),
-                    SecurityAlgorithms.HmacSha256Signature)
-            };
+        if (string.IsNullOrEmpty(jwtKey) || jwtKey.Length < 32)
+            throw new InvalidOperationException("A chave JWT deve ter pelo menos 32 caracteres.");
+        
+        var key = Encoding.ASCII.GetBytes(jwtKey);
+
+        var tokenDescriptor = new SecurityTokenDescriptor
+        {
+            Subject = new ClaimsIdentity(
+            [
+                new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
+                new Claim(ClaimTypes.Name, user.FullName),
+                new Claim(ClaimTypes.Email, user.Email),
+                new Claim(ClaimTypes.AuthenticationMethod, "Password"),
+                new Claim(ClaimTypes.Role, "User")
+            ]),
+            Expires = DateTime.UtcNow.AddHours(8),
+            SigningCredentials = new SigningCredentials(
+                new SymmetricSecurityKey(key),
+                SecurityAlgorithms.HmacSha256Signature)
+        };
 
             var token = tokenHandler.CreateToken(tokenDescriptor);
             return tokenHandler.WriteToken(token);

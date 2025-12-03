@@ -1,9 +1,8 @@
-using System.Linq;
 using Microsoft.AspNetCore.Mvc;
-using Adapty.API.Data;
 using Adapty.API.Models;
 using Adapty.API.DTOs;
-using Adapty.API.Services; // Importante
+using Adapty.API.Services;
+using Microsoft.AspNetCore.Identity; // Importante
 
 namespace Adapty.API.Controllers
 {
@@ -11,38 +10,30 @@ namespace Adapty.API.Controllers
     [Route("api/auth")]
     public class AuthController : ControllerBase
     {
-        private readonly AppDbContext _context;
-        private readonly AuthService _authService; // Injeta o Service
+        private readonly UserManager<Users> _userManager;
+        private readonly AuthService _authService;
 
-        public AuthController(AppDbContext context, AuthService authService)
+        public AuthController(UserManager<Users> userManager, AuthService authService)
         {
-            _context = context;
+            _userManager = userManager;
             _authService = authService;
         }
 
         [HttpPost("register")]
-        public IActionResult Register([FromBody] RegisterRequestDto request)
+        public async Task<IActionResult> Register([FromBody] RegisterRequestDto request)
         {
-            if (_context.Users.Any(u => u.Email == request.Email))
-            {
-                return BadRequest("Usuário já cadastrado.");
-            }
 
-            var user = new User
+            var user = new Users
             {
-                Name = request.Name,
+                FullName = request.Name,
                 Email = request.Email,
-                Role = request.Role,
-                PasswordHash = request.Password 
+                UserName = request.Email,
+                PasswordHash = request.Password
             };
+            var result = await _userManager.CreateAsync(user, request.Password);
 
-            _context.Users.Add(user);
-            _context.SaveChanges();
+            if (!result.Succeeded) return BadRequest(result.Errors);
 
-            if (user == null || user.PasswordHash != request.Password)
-            {
-                return Unauthorized("E-mail ou senha inválidos.");
-            }
             Console.WriteLine($"Senha enviada: '{request.Password}'");
             Console.WriteLine($"Senha salva:   '{user.PasswordHash}'");
 
@@ -50,19 +41,17 @@ namespace Adapty.API.Controllers
         }
 
         [HttpPost("login")]
-        public IActionResult Login([FromBody] LoginRequestDto request)
+        public async Task<IActionResult> Login([FromBody] LoginRequestDto request)
         {
-            var user = _context.Users.FirstOrDefault(u => u.Email == request.Email);
+            var user = await _userManager.FindByEmailAsync(request.Email);
 
-            if (user == null || user.PasswordHash != request.Password)
+            if (user == null || !await _userManager.CheckPasswordAsync(user, request.Password))
             {
-                return Unauthorized("E-mail ou senha inválidos.");
+                return Unauthorized(new { message = "E-mail ou senha inválidos." });
             }
+        var token = _authService.GenerateJwtToken(user);
 
-            // O Controller pede o token para o Service. Ele não sabe COMO é feito.
-            var token = _authService.GenerateJwtToken(user);
-
-            return Ok(new { token = token, user = new { user.Name, user.Email } });
+        return Ok(new AuthResponseDto(token));
         }
     }
 }
