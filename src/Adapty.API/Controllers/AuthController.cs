@@ -27,17 +27,19 @@ namespace Adapty.API.Controllers
             {
                 FullName = request.Name,
                 Email = request.Email,
-                UserName = request.Email,
-                PasswordHash = request.Password
+                UserName = request.Email
             };
             var result = await _userManager.CreateAsync(user, request.Password);
 
-            if (!result.Succeeded) return BadRequest(result.Errors);
+            if (!result.Succeeded)
+            {
+                var errors = string.Join(" | ", result.Errors.Select(e => e.Description));
+                return BadRequest(new { message = $"Erro ao registrar usuário: {errors}" });
+            }
 
-            Console.WriteLine($"Senha enviada: '{request.Password}'");
-            Console.WriteLine($"Senha salva:   '{user.PasswordHash}'");
+            var token = _authService.GenerateJwtToken(user);
 
-            return Ok(new { message = "Usuário registrado com sucesso!" });
+            return Ok(new AuthResponseDto(token));
         }
 
         [HttpPost("login")]

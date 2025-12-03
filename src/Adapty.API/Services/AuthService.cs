@@ -24,7 +24,7 @@ namespace Adapty.API.Services
         if (string.IsNullOrEmpty(jwtKey) || jwtKey.Length < 32)
             throw new InvalidOperationException("A chave JWT deve ter pelo menos 32 caracteres.");
         
-        var key = Encoding.ASCII.GetBytes(jwtKey);
+        var key = Encoding.UTF8.GetBytes(jwtKey);
 
         var tokenDescriptor = new SecurityTokenDescriptor
         {
