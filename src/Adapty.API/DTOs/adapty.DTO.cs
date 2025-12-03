@@ -42,3 +42,8 @@ namespace Adapty.API.DTOs
         List<CardSimpleDto> Cards
     );
 }
+
+    // DTOs adicionados para as novas operações
+    public record CreateCardDto(string FrontText, string BackText);
+    public record EditCardDto(int Id, string FrontText, string BackText);
+    public record EditDeckDto(int Id, string Title, string Description, string[] Tags);

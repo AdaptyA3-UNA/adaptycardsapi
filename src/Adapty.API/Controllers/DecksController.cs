@@ -89,7 +89,9 @@ namespace Adapty.API.Controllers
                 Resposta = request.BackText,
                 RepetitionCount = 0,
                 IntervalInDays = 0,
-                EaseFactor = 2.5
+                EaseFactor = 2.5,
+                // Define a próxima revisão como agora (disponível imediatamente)
+                NextReviewDate = DateTime.Now
             };
             _cardService.AddCardToDeck(deckId, card);
 
@@ -117,6 +119,68 @@ namespace Adapty.API.Controllers
             }
         }
 
+        
+        // 6. EDITAR UM DECK (PUT)
+        [HttpPut("{id}")]
+        public IActionResult EditDeck(int id, [FromBody] CreateDeckDto request)
+        {
+            var deck = _deckService.GetDeckById(id);
+            if (deck == null) return NotFound($"Deck com ID {id} não encontrado.");
+
+            deck.Nome = request.Title;
+            deck.Descricao = request.Description;
+            // Tags handling depende do modelo; se tiver campo Tags, atualize aqui.
+
+            try
+            {
+                _deckService.UpdateDeck(deck);
+                return Ok(new { message = "Deck atualizado com sucesso.", deckId = deck.Id });
+            }
+            catch (Exception)
+            {
+                return StatusCode(500, "Erro ao atualizar o deck.");
+            }
+        }
+
+        // 7. EDITAR UM CARTÃO (PUT)
+        [HttpPut("{deckId}/cards/{cardId}")]
+        public IActionResult EditCard(int deckId, int cardId, [FromBody] CreateCardDto request)
+        {
+            var card = _cardService.GetCardById(cardId);
+            if (card == null || card.DeckId != deckId) return NotFound("Cartão não encontrado no deck informado.");
+
+            card.Pergunta = request.FrontText;
+            card.Resposta = request.BackText;
+            // Opcional: manter campos de repetição / nextReview
+
+            try
+            {
+                _cardService.UpdateCard(card);
+                return Ok(new { message = "Cartão atualizado com sucesso.", cardId = card.Id });
+            }
+            catch (Exception)
+            {
+                return StatusCode(500, "Erro ao atualizar o cartão.");
+            }
+        }
+
+        // 8. EXCLUIR UM CARTÃO (DELETE)
+        [HttpDelete("{deckId}/cards/{cardId}")]
+        public IActionResult DeleteCard(int deckId, int cardId)
+        {
+            var card = _cardService.GetCardById(cardId);
+            if (card == null || card.DeckId != deckId) return NotFound("Cartão não encontrado no deck informado.");
+
+            try
+            {
+                _cardService.DeleteCard(card);
+                return Ok(new { message = "Cartão excluído com sucesso." });
+            }
+            catch (Exception)
+            {
+                return StatusCode(500, "Erro ao excluir o cartão.");
+            }
+        }
         #endregion
     }
 }
