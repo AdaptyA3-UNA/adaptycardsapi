@@ -11,6 +11,7 @@ namespace Adapty.API.Controllers
 {
     [ApiController]
     [Route("api/study")]
+    [Authorize]
     public class StudyController : ControllerBase
     {
         private readonly AppDbContext _context;
@@ -37,7 +38,14 @@ namespace Adapty.API.Controllers
             if (!cards.Any())
                 return Ok(new { message = "Nenhum cartão para revisar agora!" });
 
-            return Ok(new { sessionId = Guid.NewGuid(), cards });
+            var sessionDto = new StudySessionDto(
+                123, // Simule um ID de sessão real aqui
+                DeckId:
+                request.DeckId,
+                DateTime.Now
+            );
+
+            return Ok(new { session = sessionDto, cards });
         }
 
         [HttpPut("card/{cardId}/review")]

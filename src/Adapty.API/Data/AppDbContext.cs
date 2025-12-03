@@ -1,19 +1,15 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using Microsoft.EntityFrameworkCore;
-using System.Threading.Tasks;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Adapty.API.Models;
-using Adapty.API.DTOs;
+using Microsoft.AspNetCore.Identity;
 
 namespace Adapty.API.Data
 {
-    public class AppDbContext : DbContext
+    public class AppDbContext : IdentityDbContext<Users>
     {
-         public AppDbContext(DbContextOptions<AppDbContext> options) : base(options) { }
+        public AppDbContext(DbContextOptions options) : base(options) {}
 
         // Registre seus Models aqui
-        public DbSet<User> Users { get; set; }
         public DbSet<Deck> Decks { get; set; }
         public DbSet<Card> Cards { get; set; }
         public DbSet<Study> Studies { get; set; }
